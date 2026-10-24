@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Tədbirlər | UniEvent{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy"><div class="eyebrow"><span class="pulse"></span> KAMPUS HƏYATI</div><h1>Bilik paylaş,<br><em>yeni imkanlar</em> kəşf et.</h1>
+  <p>Universitetdə keçirilən konfransları, seminarları və təlimləri kəşf et. Sənə uyğun tədbiri tap və yerini indi bron et.</p>
+  <a class="button button-light" href="#events">Tədbirləri kəşf et <span>↘</span></a></div>
+  <div class="hero-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-sticker">Öyrən.<br>Paylaş.<br><b>İrəlilə.</b></div><div class="hero-symbol">U<span>+</span></div><div class="hero-caption">YOUR NEXT CHAPTER<br>STARTS HERE</div></div>
+</section>
+<section class="section-head" id="events"><div><div class="eyebrow">TƏDBİR TƏQVİMİ</div><h2>Yaxınlaşan tədbirlər</h2><p class="muted">Marağına uyğun növbəti təcrübəni tap.</p></div><span class="result-count">{{ events|length }} tədbir tapıldı</span></section>
+<form class="filter-panel" method="get" action="{{ url_for('index') }}">
+  <label class="search-field"><span>⌕</span><input name="q" value="{{ filters.q }}" placeholder="Tədbir adı ilə axtar..."></label>
+  <label><span class="field-label">Kateqoriya</span><select name="category"><option value="">Bütün kateqoriyalar</option>{% for c in categories %}<option value="{{ c.id }}" {% if filters.category == c.id|string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></label>
+  <label><span class="field-label">Başlanğıc tarix</span><input type="date" name="date_from" value="{{ filters.date_from }}"></label>
+  <label><span class="field-label">Son tarix</span><input type="date" name="date_to" value="{{ filters.date_to }}"></label>
+  <label><span class="field-label">Məkan</span><input name="location" value="{{ filters.location }}" placeholder="Məkanı yaz"></label>
+  <button class="button button-dark" type="submit">Axtar ↗</button>
+  <a class="clear-filter" href="{{ url_for('index') }}">Sıfırla</a>
+</form>
+{% if events %}
+<div class="event-grid">
+{% for event in events %}
+  <article class="event-card">
+    <div class="event-cover cover-{{ loop.index0 % 4 }}"><span class="cover-index">0{{ loop.index }}</span><span class="cover-label">{{ event.category_name }}</span><div class="cover-glyph">{% if loop.index0 % 4 == 0 %}✳{% elif loop.index0 % 4 == 1 %}◉{% elif loop.index0 % 4 == 2 %}⌘{% else %}✦{% endif %}</div></div>
+    <div class="event-body"><div class="event-date">{{ event.event_date }} <span>·</span> {{ event.event_time }}</div><h3>{{ event.title }}</h3><p>{{ event.description|truncate(115) }}</p>
+      <div class="event-meta"><span>⌖ {{ event.location }}</span><span>♙ {{ event.registered }}/{{ event.capacity }}</span></div>
+      <div class="card-bottom"><span class="status {% if event.event_date < today %}past{% else %}upcoming{% endif %}">{% if event.event_date < today %}Keçmiş tədbir{% else %}{{ "Yerlər dolub" if event.registered >= event.capacity else "Qeydiyyat açıq" }}{% endif %}</span><a class="arrow-link" href="{{ url_for('event_detail', event_id=event.id) }}">Ətraflı <span>↗</span></a></div>
+    </div>
+  </article>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><div class="empty-icon">⌕</div><h3>Uyğun tədbir tapılmadı</h3><p>Axtarış sözünü və ya filtrləri dəyişərək yenidən cəhd et.</p><a class="button button-dark" href="{{ url_for('index') }}">Bütün tədbirlərə bax</a></div>
+{% endif %}
+<section class="bottom-banner"><div><div class="eyebrow">İLK ADDIMI AT</div><h2>İştirak et. Əlaqə qur. <em>İlham al.</em></h2></div><p>Hər tədbir yeni ideya və yeni tanışlıq üçün fürsətdir.</p></section>
+{% endblock %}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}UniEvent — Universitet tədbirləri{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="site-header">
+  <div class="nav-wrap">
+    <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">U</span><span>UniEvent<small>Universitet tədbirləri</small></span></a>
+    <nav>
+      <a href="{{ url_for('index') }}">Tədbirlər</a>
+      {% if current_user %}<a href="{{ url_for('my_registrations') }}">Qeydiyyatlarım</a>{% endif %}
+      {% if current_role == 'admin' %}<a href="{{ url_for('admin_dashboard') }}">İdarəetmə</a>{% endif %}
+      {% if current_user %}
+        <span class="nav-user">{{ current_user }}</span><a class="nav-cta" href="{{ url_for('logout') }}">Çıxış</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Daxil ol</a><a class="nav-cta" href="{{ url_for('register') }}">Qeydiyyat</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+<main class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer"><div>UniEvent <span>· Universitet tədbirlərinin idarə edilməsi sistemi</span></div><div>Proqramlaşdırma texnologiyaları — fərdi layihə</div></footer>
+</body></html>
